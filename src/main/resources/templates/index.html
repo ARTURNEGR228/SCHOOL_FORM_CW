@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Магазин школьной формы</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #3e3e3e;
+      color: white;
+      margin: 0;
+      padding: 0;
+      font-size: 24px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #2d2d2d;
+      color: white;
+      padding: 20px 50px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 180px;
+      margin-right: 15px;
+    }
+
+    header span {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 22px;
+    }
+
+    .content-container {
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 40px;
+      background-color: #222;
+      border-radius: 25px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      color: #a6d1ff;
+      font-size: 36px;
+      text-align: center;
+    }
+
+    h3, h4 {
+      color: #a6d1ff;
+      font-size: 28px;
+    }
+
+    .alert-info {
+      background-color: #5fa0f2;
+      color: black;
+      border-radius: 40px;
+      padding: 15px 25px;
+      font-size: 22px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #333;
+      color: white;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 22px;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #555;
+    }
+
+    tr:nth-child(even) {
+      background-color: #444;
+    }
+
+    .badge {
+      background-color: #5fa0f2;
+      color: black;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 20px;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .login-message {
+      text-align: center;
+      font-size: 26px;
+      margin-top: 100px;
+      color: #a6d1ff;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="UNIFORMA logo">
+    <span>Главная</span>
+  </div>
+  <nav>
+    <a th:href="@{/}">Главная</a>
+    <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/catalog}">Каталог</a>
+    <a th:if="${#authorization.expression('isAuthenticated() and !hasRole(''ADMIN'')')}" th:href="@{/cart}">Корзина</a>
+    <a th:if="${#authorization.expression('isAuthenticated() and !hasRole(''ADMIN'')')}" th:href="@{/orders}">Мои заказы</a>
+    <a th:if="${#authorization.expression('isAuthenticated() and hasRole(''ADMIN'')')}" th:href="@{/admin/dashboard}">Админ-панель</a>
+    <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/profile}">Профиль</a>
+    <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{/logout}">Выход</a>
+  </nav>
+</header>
+
+<div th:if="${#authorization.expression('!isAuthenticated()')}" class="login-message">
+  Пожалуйста, авторизуйтесь или зарегистрируйтесь :)
+  <div style="margin-top: 30px;">
+    <a th:href="@{/login}" style="margin-right: 20px; background-color: #5fa0f2; padding: 12px 24px; color: black; text-decoration: none; border-radius: 10px; font-weight: bold;">Войти</a>
+    <a th:href="@{/register}" style="background-color: #5fa0f2; padding: 12px 24px; color: black; text-decoration: none; border-radius: 10px; font-weight: bold;">Регистрация</a>
+  </div>
+</div>
+
+
+<div th:if="${#authorization.expression('isAuthenticated()')}" class="content-container">
+  <h1 th:text="'Добро пожаловать, ' + ${username} + '!'">Добро пожаловать!</h1>
+
+  <div class="alert-info mt-4" th:if="${#authorization.expression('!hasRole(''ADMIN'')')}">
+    <h4>🔥 Горячие предложения:</h4>
+    <ul>
+      <li>Скидка 20% на школьные пиджаки до конца месяца!</li>
+      <li>Бесплатная доставка при заказе от 5000 ₽</li>
+    </ul>
+  </div>
+
+  <div class="mt-5" th:if="${#authorization.expression('!hasRole(''ADMIN'')')}">
+    <h3>Мои последние заказы</h3>
+    <table>
+      <thead>
+      <tr>
+        <th>Номер заказа</th>
+        <th>Дата</th>
+        <th>Статус</th>
+        <th>Сумма</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${orders}" th:if="${not #lists.isEmpty(orders)}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy')}"></td>
+        <td><span class="badge" th:text="${order.status}"></span></td>
+        <td th:text="${order.totalAmount} + ' ₽'"></td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(orders)}">
+        <td colspan="4" class="text-center">Нет завершенных заказов</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

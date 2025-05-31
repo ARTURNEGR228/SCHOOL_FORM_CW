@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 22px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #2d2d2d;
+            padding: 20px 50px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 180px;
+            margin-right: 15px;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .catalog-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            background-color: #1f1f1f;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #a6d1ff;
+            font-size: 36px;
+        }
+
+        .add-btn {
+            background-color: #e74c3c;
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 22px;
+            transition: background-color 0.3s;
+        }
+
+        .add-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .card {
+            background-color: #2a2a2a;
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 22px;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .card-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .card-buttons form,
+        .card-buttons a {
+            flex: 1;
+        }
+
+        .btn-custom {
+            background-color: #a6d1ff;
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            width: 100%;
+            font-size: 20px;
+        }
+
+        .btn-custom:hover {
+            background-color: #89b9f0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="UNIFORMA logo">
+        <span>Каталог</span>
+    </div>
+    <nav>
+        <a th:href="@{/}">Главная</a>
+        <a th:href="@{/catalog}">Каталог</a>
+        <a th:if="${!isAdmin}" th:href="@{/cart}">Корзина</a>
+        <a th:if="${!isAdmin}" th:href="@{/orders}">Мои заказы</a>
+        <a th:if="${isAdmin}" th:href="@{/admin/dashboard}">Админ-панель</a>
+        <a th:href="@{/profile}">Профиль</a>
+        <a th:href="@{/logout}">Выход</a>
+    </nav>
+</header>
+
+<div class="catalog-container">
+
+    <form method="get" action="#" class="mb-4 row g-3">
+        <div class="col-md-3">
+            <label class="form-label">Бренд:
+                <select class="form-select" name="brand">
+                    <option value="">Все</option>
+                    <option th:each="b : ${brands}" th:value="${b.id}" th:text="${b.name}"
+                            th:selected="${selectedBrand != null and b.id == selectedBrand}"/>
+                </select>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Пол:
+                <select class="form-select" name="gender">
+                    <option value="">Все</option>
+                    <option value="Мужской" th:selected="${selectedGender == 'Мужской'}">Мужской</option>
+                    <option value="Женский" th:selected="${selectedGender == 'Женский'}">Женский</option>
+                    <option value="Универсальный" th:selected="${selectedGender == 'Универсальный'}">Универсальный</option>
+                </select>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Сезон:
+                <select class="form-select" name="season">
+                    <option value="">Все</option>
+                    <option th:each="s : ${seasons}" th:value="${s}" th:text="${s}"
+                            th:selected="${selectedSeason == s}"/>
+                </select>
+            </label>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Категория:
+                <select class="form-select" name="category">
+                    <option value="">Все</option>
+                    <option th:each="c : ${categories}" th:value="${c}" th:text="${c}"
+                            th:selected="${selectedCategory == c}"/>
+                </select>
+            </label>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-custom">Применить</button>
+        </div>
+    </form>
+
+
+    <form method="get" action="#" class="mb-4 d-flex justify-content-end">
+        <label for="sort" class="me-2">Сортировать по:</label>
+        <select name="sort" id="sort" class="form-select w-auto" onchange="this.form.submit()">
+            <option th:value="default" th:selected="${sort == null or sort == 'default'}">По умолчанию</option>
+            <option th:value="priceAsc" th:selected="${sort == 'priceAsc'}">Цене ↑</option>
+            <option th:value="priceDesc" th:selected="${sort == 'priceDesc'}">Цене ↓</option>
+            <option th:value="nameAsc" th:selected="${sort == 'nameAsc'}">Алфавиту А-Я</option>
+            <option th:value="nameDesc" th:selected="${sort == 'nameDesc'}">Алфавиту Я-А</option>
+        </select>
+    </form>
+
+    <h2>Каталог</h2>
+
+    <div th:if="${isAdmin}" class="text-end mb-4">
+        <a href="/admin/products/add" class="add-btn">Добавить товар</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        <div class="col" th:each="product : ${products}">
+            <div class="card h-100">
+                <a th:href="@{'/product/' + ${product.id}}">
+                    <img class="product-img" th:src="@{${'/' + product.imageUrl}}" alt="Изображение товара">
+                </a>
+                <h5 class="mt-3" th:text="${product.brand != null ? product.brand.name : 'Бренд не указан'}"></h5>
+                <p th:text="${product.name}" style="font-size: 20px;">Название товара</p>
+                <div class="price" th:text="${product.price} + ' ₽'">Цена</div>
+                <div class="card-buttons">
+                    <form th:if="${!isAdmin}" th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                        <select name="size" class="form-select mb-2" required>
+                            <option value="" disabled selected>Выберите размер</option>
+                            <option th:each="ss : ${product.sizeStocks}"
+                                    th:value="${ss.size}"
+                                    th:text="${ss.size + ' (осталось: ' + ss.stock + ')'}"
+                                    th:if="${ss.stock > 0}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-custom">В корзину</button>
+                    </form>
+
+                    <a th:if="${isAdmin}" th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="btn btn-custom">Редактировать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

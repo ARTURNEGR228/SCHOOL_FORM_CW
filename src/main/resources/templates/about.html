@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Об авторе</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #3e3e3e;
+            color: white;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #2d2d2d;
+            color: white;
+            padding: 20px 50px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 180px;
+            margin-right: 15px;
+        }
+
+        header span {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .content-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #222;
+            border-radius: 25px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            color: #a6d1ff;
+            font-size: 36px;
+            text-align: center;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="UNIFORMA logo">
+        <span>О проекте</span>
+    </div>
+    <nav>
+        <a th:href="@{/}">Главная</a>
+        <a th:href="@{/about}">Об авторе</a>
+        <a th:href="@{/statistics}">Статистика</a>
+    </nav>
+</header>
+
+<div class="content-container">
+    <h1>Об авторе</h1>
+    <p>Данный веб-сервис разработан в рамках курсового проекта студентом направления «Программная инженерия»
+        по имени Сафиуллин Артур. Цель проекта — создание информационно-справочной системы для магазина по продаже школьной формы.</p>
+    <p>Проект реализован с использованием технологий: Spring Boot, Spring Data JPA, Spring Security, Thymeleaf, PostgreSQL.</p>
+    <p>Функционал системы включает: авторизацию и регистрацию пользователей, управление товарами и заказами, оформление заказов,
+        просмотр истории заказов, поддержка ролей пользователей (администратор/пользователь), корзина с выбором размеров одежды, сортировки, фильтры и статистика.</p>
+    <p>Проект имеет адаптивный и современный дизайн, удобный для восприятия конечными пользователями.</p>
+    <p>Наслаждайтесь 🥲</p>
+</div>
+
+</body>
+</html>

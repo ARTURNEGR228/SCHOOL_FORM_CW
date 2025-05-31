@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Регистрация</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #3e3e3e;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #2d2d2d;
+      color: white;
+      padding: 15px 50px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 180px;
+      margin-right: 15px;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .register-box {
+      max-width: 500px;
+      margin: 80px auto;
+      background-color: #222;
+      color: white;
+      padding: 40px;
+      border-radius: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .register-box h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    .register-box input[type="text"],
+    .register-box input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #8b98ab;
+      color: white;
+      font-size: 16px;
+    }
+
+    .register-box input::placeholder {
+      color: #e0e0e0;
+    }
+
+    .register-box label {
+      font-size: 14px;
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+    .register-box button {
+      width: 100%;
+      background-color: #a6d1ff;
+      color: black;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 25px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .register-box .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #5fa0f2;
+      display: block;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img th:src="@{/images/logo.png}" alt="UNIFORMA logo">
+    <span style="font-size: 18px; font-weight: bold;">UNIFORMA</span>
+  </div>
+  <nav>
+    <a th:href="@{/}">Главная</a>
+    <a th:href="@{/about}">Об авторе</a>
+    <a th:href="@{/statistics}">Статистика</a>
+  </nav>
+</header>
+
+<div class="register-box">
+  <h2>Регистрация</h2>
+
+  <div th:if="${param.error}" class="error">
+    <span th:text="${param.error == 'duplicate'} ? 'Логин уже занят' : 'Ошибка регистрации'"></span>
+  </div>
+
+  <form th:action="@{/register}" method="post">
+    <label for="username">Логин</label>
+    <input type="text" id="username" name="username"
+           minlength="4" maxlength="20" pattern="[a-zA-Z0-9]+"
+           placeholder="Введите логин"
+           title="Только буквы и цифры (4-20 символов)" required>
+
+    <label for="password">Пароль</label>
+    <input type="password" id="password" name="password"
+           placeholder="Введите пароль"
+           minlength="6" required>
+
+    <label for="confirmPassword">Подтверждение пароля</label>
+    <input type="password" id="confirmPassword" name="confirmPassword"
+           placeholder="Повторите пароль"
+           minlength="6" required>
+
+    <button type="submit">Зарегистрироваться</button>
+
+    <a class="login-link" th:href="@{/login}">Уже есть аккаунт? Войти</a>
+  </form>
+</div>
+
+</body>
+</html>
